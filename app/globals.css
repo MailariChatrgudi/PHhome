@@ -1,0 +1,445 @@
+@import "tailwindcss";
+
+/* ─── Color System v2 Tokens (design.md §12) ──────────────────────────────── */
+:root {
+  /* Neutral surface */
+  --bg: #FBF8F9;
+  --surface: #FFFFFF;
+  --ink: #1F1A1D;
+  --ink-muted: #6A5A62;
+  --line: #ECE4E8;
+
+  /* Primary brand: plum-magenta */
+  --plum: #A31758;
+  --plum-ring: #B0215A;
+  --plum-dark: #7E1244;
+  --plum-deep: #4A0B2A;
+  --plum-tint: #FBEFF4;
+  --plum-100: #F6D9E6;
+
+  /* Secondary brand: deep blue */
+  --blue: #185E96;
+  --blue-dark: #124A76;
+  --blue-deep: #0E3A5F;
+  --blue-tint: #EAF2F9;
+  --blue-100: #D6E7F5;
+
+  /* Attention accent. Text on amber is ALWAYS --ink, never white */
+  --amber: #FFB020;
+  --amber-tint: #FFF4DC;
+  --amber-ink: #6B4200;
+
+  /* Availability & semantic */
+  --green: #1B7F4B;
+  --success: #1B7F4B;
+  --green-tint: #E7F6EE;
+  --whatsapp: #0B7A5A;
+  --danger: #B3261E;
+  --danger-tint: #FDECEA;
+
+  /* Form fields (non-text contrast 3:1 or better) */
+  --field-border: #85737C;
+
+  /* Radius */
+  --radius-card: 12px;
+  --radius-hero: 28px;
+
+  /* Depth */
+  --shadow-soft: 0 8px 30px rgba(74, 11, 42, 0.08);
+  --shadow-rest: 0 1px 2px rgba(74, 11, 42, 0.06), 0 4px 16px rgba(74, 11, 42, 0.06);
+  --shadow-lift: 0 12px 32px rgba(74, 11, 42, 0.14);
+
+  /* The only allowed gradients */
+  --grad-brand: linear-gradient(135deg, #4A0B2A 0%, #7E1244 55%, #A31758 100%);
+  --grad-blue: linear-gradient(135deg, #0E3A5F 0%, #185E96 100%);
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* ─── Tailwind theme bridge (non-default names) ────────────────────────────── */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-field-border: var(--field-border);
+
+  --color-plum: var(--plum);
+  --color-plum-ring: var(--plum-ring);
+  --color-plum-dark: var(--plum-dark);
+  --color-plum-deep: var(--plum-deep);
+  --color-plum-tint: var(--plum-tint);
+  --color-plum-100: var(--plum-100);
+
+  --color-brandblue: var(--blue);
+  --color-brandblue-dark: var(--blue-dark);
+  --color-brandblue-deep: var(--blue-deep);
+  --color-brandblue-tint: var(--blue-tint);
+  --color-brandblue-100: var(--blue-100);
+
+  --color-attention: var(--amber);
+  --color-attention-tint: var(--amber-tint);
+  --color-attention-ink: var(--amber-ink);
+
+  --color-ok: var(--green);
+  --color-ok-tint: var(--green-tint);
+  --color-whatsapp: var(--whatsapp);
+
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-card: var(--radius-card);
+  --radius-hero: var(--radius-hero);
+  --shadow-rest: var(--shadow-rest);
+  --shadow-lift: var(--shadow-lift);
+}
+
+/* ─── Base reset & typography ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 1024px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+/* ─── Typography scale (design.md §3) ─────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.text-hero {
+  font-size: clamp(34px, 5vw, 60px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.text-h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.text-h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.text-h3 {
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.text-small {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-btn {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.prose-width {
+  max-width: 68ch;
+}
+
+/* ─── Layout ──────────────────────────────────────────────────────────────── */
+.container-content {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+@media (min-width: 768px) {
+  .container-content {
+    padding-inline: 32px;
+  }
+}
+
+.container-hero {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: max(24px, 7%);
+}
+
+.section-py {
+  padding-block: 64px;
+}
+
+@media (min-width: 1024px) {
+  .section-py {
+    padding-block: 112px;
+  }
+}
+
+/* ─── Focus ring (design.md §5) ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.focus-white:focus-visible {
+  outline-color: var(--surface);
+}
+
+/* ─── Form Controls (Phase 1 hard spec) ───────────────────────────────────── */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="password"],
+select,
+textarea,
+.form-input {
+  width: 100%;
+  border: 1.5px solid var(--field-border);
+  background-color: var(--surface);
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus,
+.form-input:focus {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+  border-color: var(--blue);
+  box-shadow: none;
+}
+
+input::placeholder,
+textarea::placeholder,
+.form-input::placeholder {
+  color: var(--ink-muted);
+  opacity: 1;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.form-error {
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ─── Cards (Phase 1 hard spec) ───────────────────────────────────────────── */
+.card,
+.card-base {
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-rest);
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card:hover,
+  .card-base:hover,
+  .card-hover:hover {
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-2px);
+  }
+}
+
+/* ─── Buttons (design.md §5) ─────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 48px;
+  padding-inline: 28px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  background-color: var(--plum);
+  color: var(--surface);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background-color: var(--plum-dark);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 48px;
+  padding-inline: 28px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  background-color: transparent;
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background-color: var(--blue-tint);
+}
+
+.btn-hero-primary {
+  background-color: var(--surface);
+  color: var(--plum);
+}
+
+.btn-hero-primary:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-hero-secondary {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--surface);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.btn-hero-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Hero Call Pulse (Phase 3 D2) ────────────────────────────────────────── */
+.hero-call-pulse {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-call-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    opacity: 0;
+    animation: heroPulseRing 1.6s ease-out 1.5s 3 forwards;
+  }
+
+  @keyframes heroPulseRing {
+    0% {
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    100% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+}
+
+/* ─── Chips ───────────────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--plum-tint);
+  color: var(--plum);
+}
+
+/* ─── Motion ──────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-up {
+    animation: fadeUp 200ms ease-out both;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Accessibility: skip link ────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 8px 16px;
+  background: var(--plum);
+  color: var(--surface);
+  font-weight: 500;
+  z-index: 9999;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+}
