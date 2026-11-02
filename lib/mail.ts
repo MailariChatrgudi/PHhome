@@ -70,7 +70,6 @@ export async function sendCustomerEnquiry(payload: CustomerEnquiryMailPayload): 
   const resend = getResendClient();
   const toEmail = process.env.QUERY_TO_EMAIL || 'owner@homenursingservice.in';
   const fromEmail = process.env.QUERY_FROM_EMAIL || 'enquiries@homenursingservice.in';
-
   const cleanName = sanitizeSubjectLine(payload.name);
   const subject = `New customer enquiry – ${cleanName}`;
   const timestamp = getIstTimestamp();
@@ -126,7 +125,7 @@ export async function sendCustomerEnquiry(payload: CustomerEnquiryMailPayload): 
       <p style="font-size: 12px; color: #6A5A62; margin-top: 24px; margin-bottom: 0;">This enquiry was submitted on homenursingservice.in and is not stored in a public database.</p>
     </div>
   `;
-
+  
   try {
     const { error } = await resend.emails.send({
       from: fromEmail,

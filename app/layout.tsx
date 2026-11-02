@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--ink)] antialiased">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--ink)] antialiased">
         {/* Skip-to-content for keyboard users (design.md §11) */}
         <a href="#main-content" className="skip-link">
           Skip to main content

@@ -42,7 +42,6 @@ export async function POST(request: Request) {
   }
 
   const { email, password } = body;
-
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     return NextResponse.json(
       { error: 'UNAUTHENTICATED', message: 'Invalid email or password' },

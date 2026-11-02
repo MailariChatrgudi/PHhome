@@ -233,12 +233,17 @@ export default function HeroCarousel() {
             <span>Call now</span>
           </a>
 
-          <Link
-            href="/contact"
-            className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full font-medium text-base text-[var(--ink)] md:text-white border border-[var(--line)] md:border-white/70 hover:bg-white/10 transition-colors select-none"
+          <button
+            type="button"
+            suppressHydrationWarning
+            onClick={() => {
+              const fn = (window as typeof window & { __openEnquiryModal?: () => void }).__openEnquiryModal;
+              if (fn) fn();
+            }}
+            className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full font-medium text-base text-[var(--ink)] md:text-white border border-[var(--line)] md:border-white/70 hover:bg-white/10 transition-colors select-none cursor-pointer"
           >
             Send a request
-          </Link>
+          </button>
         </div>
       </div>
 

@@ -104,9 +104,12 @@ export default function CustomerForm({
 
       const data = await res.json().catch(() => ({}));
 
-      if (res.ok && data.success) {
+      if (res.ok && (data.ok || data.success)) {
         setStatus('success');
       } else {
+        if (data.error?.fields) {
+          setErrors(data.error.fields);
+        }
         setStatus('error');
         setErrorMessage(
           data.error?.message ||
@@ -201,17 +204,8 @@ export default function CustomerForm({
           {/* Hidden metadata */}
           <input type="hidden" name="sourcePage" value={sourcePage} />
 
-          {/* Honeypot field — removed from layout */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '-9999px',
-              width: '1px',
-              height: '1px',
-              overflow: 'hidden',
-            }}
-            aria-hidden="true"
-          >
+          {/* Honeypot field — hidden from humans and autofill */}
+          <div style={{ display: 'none' }} aria-hidden="true">
             <label htmlFor="customer-website">Leave this field blank</label>
             <input
               id="customer-website"
@@ -219,6 +213,10 @@ export default function CustomerForm({
               name="website"
               tabIndex={-1}
               autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              data-bwignore="true"
+              data-form-type="other"
               value={form.website}
               onChange={(e) => setForm({ ...form, website: e.target.value })}
             />
@@ -315,6 +313,7 @@ export default function CustomerForm({
               id="customer-email"
               name="email"
               type="email"
+              suppressHydrationWarning
               placeholder="e.g. name@example.com"
               value={form.email}
               onChange={(e) => {
@@ -352,6 +351,7 @@ export default function CustomerForm({
             <textarea
               id="customer-message"
               name="message"
+              suppressHydrationWarning
               required
               rows={4}
               maxLength={1000}
@@ -420,6 +420,7 @@ export default function CustomerForm({
           {/* Primary Submit Button */}
           <button
             type="submit"
+            suppressHydrationWarning
             disabled={status === 'submitting'}
             style={{ minHeight: 48 }}
             className="btn-primary w-full shadow-[var(--shadow-rest)] transition-all duration-150 focus:outline-none focus:ring-3 focus:ring-[var(--blue)] focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base cursor-pointer"

@@ -174,17 +174,8 @@ export default function ApplicantForm() {
           noValidate
           className="space-y-4"
         >
-          {/* Honeypot field */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '-9999px',
-              width: '1px',
-              height: '1px',
-              overflow: 'hidden',
-            }}
-            aria-hidden="true"
-          >
+          {/* Honeypot field — hidden from humans and autofill */}
+          <div style={{ display: 'none' }} aria-hidden="true">
             <label htmlFor="applicant-website">Leave this field blank</label>
             <input
               id="applicant-website"
@@ -192,6 +183,10 @@ export default function ApplicantForm() {
               name="website"
               tabIndex={-1}
               autoComplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              data-bwignore="true"
+              data-form-type="other"
               value={form.website}
               onChange={(e) => setForm({ ...form, website: e.target.value })}
             />

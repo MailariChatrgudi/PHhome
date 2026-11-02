@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { site } from '@/content/site';
 
 export default function AdminNav() {
   const pathname = usePathname();
@@ -18,7 +20,7 @@ export default function AdminNav() {
       .then((data) => {
         if (data?.email) setEmail(data.email);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [isLoginPage]);
 
   if (isLoginPage) return null;
@@ -41,12 +43,14 @@ export default function AdminNav() {
             href="/admin/updates"
             className="flex items-center gap-2 font-semibold text-base sm:text-lg text-[var(--plum)]"
           >
-            <span
-              className="w-7 h-7 rounded-lg text-white font-bold text-xs flex items-center justify-center shadow-xs"
-              style={{ background: 'var(--grad-brand)' }}
-            >
-              PH
-            </span>
+            <Image
+              src={site.logo.path}
+              alt={site.logo.alt}
+              width={40}
+              height={40}
+              priority
+              style={{ borderRadius: '50%', width: 40, height: 40, objectFit: 'cover' }}
+            />
             <span className="hidden sm:inline">PH Home</span>
             <span className="text-xs uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--plum-tint)] text-[var(--plum)] font-semibold">
               Admin
@@ -56,11 +60,10 @@ export default function AdminNav() {
           <nav className="flex items-center gap-2 sm:gap-4 text-sm font-medium">
             <Link
               href="/admin/updates"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname.startsWith('/admin/updates')
+              className={`px-3 py-1.5 rounded-lg transition-colors ${pathname.startsWith('/admin/updates')
                   ? 'bg-[var(--plum-tint)] text-[var(--plum)] font-semibold'
                   : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
-              }`}
+                }`}
             >
               Updates
             </Link>
