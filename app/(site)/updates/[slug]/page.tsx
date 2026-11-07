@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     path: `/updates/${update.slug}`,
-    ogImage: update.coverImage?.url || undefined,
+    ogImage: update.coverImage?.url?.trim() || undefined,
   });
 }
 
@@ -127,13 +127,16 @@ export default async function UpdateDetailPage({ params }: Props) {
       coverImage?: { url?: string; alt?: string };
     }>;
 
-    relatedPosts = relatedDocs.map((doc) => ({
-      slug: doc.slug,
-      title: doc.title,
-      excerpt: doc.excerpt || '',
-      publishedAt: doc.publishedAt ? new Date(doc.publishedAt).toISOString() : new Date().toISOString(),
-      coverImage: doc.coverImage?.url ? { url: doc.coverImage.url, alt: doc.coverImage.alt || doc.title } : undefined,
-    }));
+    relatedPosts = relatedDocs.map((doc) => {
+      const coverUrl = doc.coverImage?.url?.trim();
+      return {
+        slug: doc.slug,
+        title: doc.title,
+        excerpt: doc.excerpt || '',
+        publishedAt: doc.publishedAt ? new Date(doc.publishedAt).toISOString() : new Date().toISOString(),
+        coverImage: coverUrl ? { url: coverUrl, alt: doc.coverImage?.alt || doc.title } : undefined,
+      };
+    });
   } catch {
     relatedPosts = [];
   }
@@ -189,10 +192,10 @@ export default async function UpdateDetailPage({ params }: Props) {
       </header>
 
       {/* Optional Cover Image */}
-      {update.coverImage?.url && (
+      {update.coverImage?.url?.trim() && (
         <div className="relative w-full aspect-[21/9] sm:aspect-[16/7] rounded-2xl overflow-hidden border border-[var(--line)] mb-10 shadow-xs">
           <Image
-            src={update.coverImage.url}
+            src={update.coverImage.url.trim()}
             alt={update.coverImage.alt || update.title}
             fill
             priority

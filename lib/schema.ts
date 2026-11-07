@@ -144,7 +144,9 @@ export function articleSchema({
     url: `${BASE}${url}`,
     datePublished,
     dateModified,
-    image: imageUrl ? `${BASE}${imageUrl}` : `${BASE}${site.ogImage}`,
+    image: imageUrl
+      ? (imageUrl.startsWith('http') ? imageUrl : `${BASE}${imageUrl}`)
+      : `${BASE}${site.ogImage}`,
     author: {
       '@type': 'Organization',
       name: site.name,

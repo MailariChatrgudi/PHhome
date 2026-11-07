@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { getCloudinaryConfig, isCloudinaryConfigured } from '@/lib/cloudinary';
 
 /**
  * POST /api/admin/uploads/sign (spec: api.md §4)
- * Returns a signed Cloudinary upload payload so the browser can upload directly
- * without exposing the Cloudinary API secret.
+ * Returns a signed Cloudinary upload payload (and uploadPreset if configured)
+ * so the browser can upload directly without exposing the Cloudinary API secret.
  */
 export async function POST() {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = process.env.CLOUDINARY_API_KEY;
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  const { cloudName, apiKey, apiSecret, uploadPreset } = getCloudinaryConfig();
 
-  if (!cloudName || !apiKey || !apiSecret) {
+  if (!isCloudinaryConfigured()) {
     return NextResponse.json(
       {
         configured: false,
@@ -24,9 +23,12 @@ export async function POST() {
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = 'updates';
 
-  // Cloudinary signature is SHA-1 of sorted params + api_secret
-  const stringToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
-  const signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
+  let signature = '';
+  if (apiSecret) {
+    // Cloudinary signature is SHA-1 of sorted params + api_secret
+    const stringToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+    signature = crypto.createHash('sha1').update(stringToSign).digest('hex');
+  }
 
   return NextResponse.json({
     configured: true,
@@ -35,6 +37,6 @@ export async function POST() {
     timestamp,
     signature,
     folder,
+    uploadPreset: uploadPreset || undefined,
   });
 }
-

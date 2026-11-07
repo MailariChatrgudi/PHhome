@@ -22,10 +22,11 @@ interface UpdateCardProps {
  * 4px top accent bar, date (13px), title, 2-line excerpt (15px).
  */
 export default function UpdateCard({ update }: UpdateCardProps) {
-  const imageUrl =
+  const rawImageUrl =
     typeof update.coverImage === 'string'
       ? update.coverImage
       : update.coverImage?.url;
+  const imageUrl = rawImageUrl?.trim() || '';
   const imageAlt =
     typeof update.coverImage === 'object'
       ? update.coverImage?.alt || update.title

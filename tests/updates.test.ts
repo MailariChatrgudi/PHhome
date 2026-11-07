@@ -5,6 +5,10 @@ import { Update } from '@/models/Update';
 import { setMongooseConnectionForTesting } from '@/lib/mongodb';
 import { GET as getUpdatesHandler } from '@/app/api/updates/route';
 import { GET as getUpdateBySlugHandler } from '@/app/api/updates/[slug]/route';
+import { extractCloudinaryPublicId, isCloudinaryConfigured, getCloudinaryConfig, saveLocalUpload } from '@/lib/cloudinary';
+import { POST as postUploadHandler } from '@/app/api/admin/uploads/route';
+import fs from 'node:fs';
+import path from 'node:path';
 
 describe('Phase 7: Update Model Schema & Indexes', () => {
   test('1. Schema defines required fields, enums, defaults, and indexes', () => {
@@ -246,5 +250,80 @@ describe('Phase 7: Public Single Update API (GET /api/updates/[slug])', () => {
     assert.strictEqual(res.status, 200);
     assert.strictEqual(json.redirect, true);
     assert.strictEqual(json.destination, '/updates/new-updated-slug-title');
+  });
+});
+
+describe('Phase 7: Cloudinary & Local Upload Handling (lib/cloudinary.ts & /api/admin/uploads)', () => {
+  test('8. extractCloudinaryPublicId accurately extracts IDs from various Cloudinary URL formats', () => {
+    assert.strictEqual(
+      extractCloudinaryPublicId('https://res.cloudinary.com/demo/image/upload/v1234567890/updates/sample.jpg'),
+      'updates/sample'
+    );
+    assert.strictEqual(
+      extractCloudinaryPublicId('https://res.cloudinary.com/demo/image/upload/updates/custom-name.png?query=1'),
+      'updates/custom-name'
+    );
+    assert.strictEqual(extractCloudinaryPublicId('https://external-domain.com/photo.jpg'), '');
+    assert.strictEqual(extractCloudinaryPublicId(''), '');
+    assert.strictEqual(extractCloudinaryPublicId(undefined), '');
+  });
+
+  test('9. getCloudinaryConfig parses CLOUDINARY_URL and individual variables', () => {
+    const config = getCloudinaryConfig();
+    assert.ok(typeof config.cloudName === 'string', 'cloudName must be a string');
+    assert.ok(typeof config.apiKey === 'string', 'apiKey must be a string');
+  });
+
+  test('10. saveLocalUpload writes file to public/uploads/updates/ and returns public path', async () => {
+    const testBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAA=';
+    const result = await saveLocalUpload(testBase64, 'test-unit-pixel.png', 'updates');
+
+    assert.ok(result.url.startsWith('/uploads/updates/'), 'URL must be in /uploads/updates/');
+    assert.ok(result.url.endsWith('.png'), 'URL must preserve png extension');
+
+    const filePath = path.join(process.cwd(), 'public', result.url);
+    assert.ok(fs.existsSync(filePath), 'Saved file must exist on disk');
+
+    // Clean up
+    fs.unlinkSync(filePath);
+    assert.ok(!fs.existsSync(filePath), 'Test file must be cleaned up');
+  });
+
+  test('11. POST /api/admin/uploads without file returns 400 NO_FILE', async () => {
+    const emptyForm = new FormData();
+    const req = new Request('http://localhost/api/admin/uploads', {
+      method: 'POST',
+      body: emptyForm,
+    });
+    const res = await postUploadHandler(req);
+    const json = await res.json();
+
+    assert.strictEqual(res.status, 400);
+    assert.strictEqual(json.error, 'NO_FILE');
+  });
+
+  test('12. POST /api/admin/uploads falls back to local storage when upload succeeds', async () => {
+    const formData = new FormData();
+    const blob = new Blob(['sample-image-content'], { type: 'image/jpeg' });
+    formData.append('file', blob, 'sample-unit-photo.jpg');
+
+    const req = new Request('http://localhost/api/admin/uploads', {
+      method: 'POST',
+      body: formData,
+    });
+    const res = await postUploadHandler(req);
+    const json = await res.json();
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(json.success, true);
+    assert.ok(typeof json.url === 'string' && json.url.length > 0, 'Must return a valid image URL');
+
+    // If it saved locally, verify and clean up
+    if (json.storage === 'local') {
+      const filePath = path.join(process.cwd(), 'public', json.url);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
   });
 });

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
+import { extractCloudinaryPublicId } from '@/lib/cloudinary';
 
 interface CoverImageData {
   url: string;
@@ -95,7 +96,7 @@ export default function UpdateEditor({ initialData, isNew = false }: UpdateEdito
     }, 0);
   };
 
-  // Cloudinary Direct Signed Image Upload
+  // Cloudinary Direct / Server Signed Image Upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -104,17 +105,35 @@ export default function UpdateEditor({ initialData, isNew = false }: UpdateEdito
     setError('');
 
     try {
-      // 1. Get signature from server
+      // 1. Try server-side upload first (avoids browser CORS & network blocks)
+      const serverFormData = new FormData();
+      serverFormData.append('file', file);
+      serverFormData.append('folder', 'updates');
+
+      const serverRes = await fetch('/api/admin/uploads', {
+        method: 'POST',
+        body: serverFormData,
+      });
+
+      const serverData = await serverRes.json();
+
+      if (serverRes.ok && serverData.url) {
+        setCoverUrl(serverData.url);
+        setCoverPublicId(serverData.publicId || extractCloudinaryPublicId(serverData.url));
+        if (!coverAlt) {
+          setCoverAlt(title || 'Cover image');
+        }
+        return;
+      }
+
+      // 2. Fallback: direct browser-to-Cloudinary upload
       const signRes = await fetch('/api/admin/uploads/sign', { method: 'POST' });
       const signData = await signRes.json();
 
       if (!signData.configured) {
-        setError('Cloudinary is not configured. You can paste an image URL directly below.');
-        setUploadingImage(false);
-        return;
+        throw new Error(serverData.message || 'Cloudinary is not configured. Check .env.local.');
       }
 
-      // 2. Upload directly to Cloudinary
       const formData = new FormData();
       formData.append('file', file);
       formData.append('api_key', signData.apiKey);
@@ -134,12 +153,12 @@ export default function UpdateEditor({ initialData, isNew = false }: UpdateEdito
 
       if (cloudData.secure_url) {
         setCoverUrl(cloudData.secure_url);
-        setCoverPublicId(cloudData.public_id || '');
+        setCoverPublicId(cloudData.public_id || extractCloudinaryPublicId(cloudData.secure_url));
         if (!coverAlt) {
           setCoverAlt(title || 'Cover image');
         }
       } else {
-        throw new Error(cloudData.error?.message || 'Upload failed');
+        throw new Error(cloudData.error?.message || serverData.message || 'Upload failed');
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Image upload failed. You can paste an image URL instead.');
@@ -174,7 +193,7 @@ export default function UpdateEditor({ initialData, isNew = false }: UpdateEdito
       coverImage: {
         url: coverUrl.trim(),
         alt: coverAlt.trim() || cleanTitle,
-        publicId: coverPublicId.trim(),
+        publicId: coverPublicId.trim() || extractCloudinaryPublicId(coverUrl.trim()),
       },
       seo: {
         title: seoTitle.trim(),
@@ -546,10 +565,22 @@ export default function UpdateEditor({ initialData, isNew = false }: UpdateEdito
                 id="cover-url"
                 type="url"
                 value={coverUrl}
-                onChange={(e) => setCoverUrl(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCoverUrl(val);
+                  const extracted = extractCloudinaryPublicId(val);
+                  if (extracted) {
+                    setCoverPublicId(extracted);
+                  }
+                }}
                 placeholder="https://..."
                 className="w-full h-9 px-3 rounded-xl bg-[var(--surface)] text-xs text-[var(--ink)] border border-[var(--field-border)] focus:outline-none focus:ring-2 focus:ring-[var(--blue)]"
               />
+              {coverPublicId && (
+                <p className="mt-1 text-[11px] font-mono text-[var(--ink-muted)] flex items-center gap-1">
+                  <span className="text-[var(--green)]">✓</span> Public ID: {coverPublicId}
+                </p>
+              )}
             </div>
 
             <div>

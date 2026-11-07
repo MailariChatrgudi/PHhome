@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import { connectToDatabase, isDatabaseConfigured } from '@/lib/mongodb';
 import { Update, type ICoverImage, type ISEO } from '@/models/Update';
+import { extractCloudinaryPublicId } from '@/lib/cloudinary';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -99,7 +100,16 @@ export async function PUT(request: Request, { params }: Props) {
     if (body.excerpt !== undefined) existing.excerpt = String(body.excerpt).trim();
     if (body.content !== undefined) existing.content = String(body.content);
     if (body.coverImage !== undefined) {
-      existing.coverImage = body.coverImage ? (body.coverImage as ICoverImage) : undefined;
+      if (body.coverImage && typeof body.coverImage === 'object') {
+        const rawCover = body.coverImage as ICoverImage;
+        const url = rawCover.url ? String(rawCover.url).trim() : '';
+        const publicId =
+          (rawCover.publicId ? String(rawCover.publicId).trim() : '') || extractCloudinaryPublicId(url);
+        const alt = rawCover.alt ? String(rawCover.alt).trim() : (existing.title || '');
+        existing.coverImage = { url, publicId, alt };
+      } else {
+        existing.coverImage = undefined;
+      }
     }
     if (body.seo !== undefined) {
       existing.seo = body.seo ? (body.seo as ISEO) : undefined;

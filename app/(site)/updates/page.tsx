@@ -58,13 +58,16 @@ export default async function UpdatesPage({ searchParams }: Props) {
         coverImage?: { url?: string; alt?: string };
       }>;
 
-      updates = docs.map((doc) => ({
-        slug: doc.slug,
-        title: doc.title,
-        excerpt: doc.excerpt || '',
-        publishedAt: doc.publishedAt ? new Date(doc.publishedAt).toISOString() : new Date().toISOString(),
-        coverImage: doc.coverImage?.url ? { url: doc.coverImage.url, alt: doc.coverImage.alt || doc.title } : undefined,
-      }));
+      updates = docs.map((doc) => {
+        const coverUrl = doc.coverImage?.url?.trim();
+        return {
+          slug: doc.slug,
+          title: doc.title,
+          excerpt: doc.excerpt || '',
+          publishedAt: doc.publishedAt ? new Date(doc.publishedAt).toISOString() : new Date().toISOString(),
+          coverImage: coverUrl ? { url: coverUrl, alt: doc.coverImage?.alt || doc.title } : undefined,
+        };
+      });
       total = count;
     } catch {
       // Graceful fallback if database connection times out

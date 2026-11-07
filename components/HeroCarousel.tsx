@@ -124,7 +124,7 @@ export default function HeroCarousel() {
           if (!reducedMotion) setPaused(false);
         }
       }}
-      className="relative w-full max-w-[1400px] mx-auto md:my-6 md:rounded-[28px] overflow-hidden bg-[var(--plum-deep)] shadow-[var(--shadow-soft)]"
+      className="relative w-full max-w-[1400px] mx-auto md:my-6 md:rounded-[28px] overflow-hidden bg-[var(--surface)] shadow-[var(--shadow-soft)] border border-[var(--line)]"
     >
       {/* ── Slide Media Container ── */}
       <div className="relative w-full aspect-[4/3] md:aspect-[21/9] overflow-hidden">
@@ -155,7 +155,8 @@ export default function HeroCarousel() {
                 loading={idx === 0 ? 'eager' : 'lazy'}
                 unoptimized
                 sizes="(max-width: 768px) 100vw, 1400px"
-                className="object-cover"
+                className="object-fill w-full h-full"
+                style={{ objectFit: 'fill' }}
               />
 
               {/* Desktop gradient overlay */}
@@ -163,7 +164,7 @@ export default function HeroCarousel() {
                 className="hidden md:block absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    'linear-gradient(90deg, rgba(74,11,42,.85) 0%, rgba(74,11,42,.50) 45%, rgba(74,11,42,0) 75%)',
+                    'linear-gradient(90deg, rgba(20,10,25,0.72) 0%, rgba(20,10,25,0.40) 40%, rgba(20,10,25,0) 70%)',
                 }}
                 aria-hidden="true"
               />
@@ -195,16 +196,16 @@ export default function HeroCarousel() {
         <h1
           className="text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white md:text-white mb-2 leading-tight max-w-xl"
           style={{
-            textShadow: '0 2px 8px rgba(255, 255, 255, 0.25)',
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.6)',
           }}
         >
           Skilled, compassionate care, at home.
         </h1>
 
         <p
-          className="text-sm sm:text-base md:text-lg text-[var(--ink-muted)] md:text-white/90 mb-6 max-w-lg leading-relaxed"
+          className="text-sm sm:text-base md:text-lg text-[var(--ink-muted)] md:text-white/95 mb-6 max-w-lg leading-relaxed"
           style={{
-            textShadow: '0 1px 4px rgba(74, 11, 42, 0.25)',
+            textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)',
           }}
         >
           Professional home nursing and caregiver services across Bengaluru — for

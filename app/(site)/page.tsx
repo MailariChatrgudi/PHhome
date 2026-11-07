@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { connection } from 'next/server';
 import HeroCarousel from '@/components/HeroCarousel';
 import TrustStrip from '@/components/TrustStrip';
 import CtaBand from '@/components/CtaBand';
@@ -83,15 +84,16 @@ async function fetchPublishedUpdates(): Promise<UpdateCardData[]> {
       publishedAt:
         item.publishedAt instanceof Date
           ? item.publishedAt.toISOString()
-          : item.publishedAt || new Date().toISOString(),
+          : item.publishedAt || '',
     }));
   } catch {
     return [];
   }
 }
 
-export default async function HomePage() {
-  // Fetch real published posts; pad to exactly 3 with dummies
+/** Async component wrapped in <Suspense> for Next.js 16 Partial Prerendering */
+async function LatestUpdatesList() {
+  await connection();
   const realPosts = await fetchPublishedUpdates();
   const needed = Math.max(0, 3 - realPosts.length);
   const updateCards: UpdateCardData[] = [
@@ -99,6 +101,26 @@ export default async function HomePage() {
     ...DUMMY_UPDATES.slice(0, needed),
   ];
 
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {updateCards.map((update) => (
+        <UpdateCard key={update.slug} update={update} />
+      ))}
+    </div>
+  );
+}
+
+function UpdatesFallback() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {DUMMY_UPDATES.map((update) => (
+        <UpdateCard key={update.slug} update={update} />
+      ))}
+    </div>
+  );
+}
+
+export default function HomePage() {
   return (
     <HomePageClient>
       {/* ── 1. Hero Carousel ── */}
@@ -111,7 +133,7 @@ export default async function HomePage() {
               margin: '24px auto',
               aspectRatio: '21 / 9',
               borderRadius: 28,
-              backgroundColor: 'var(--plum-deep)',
+              backgroundColor: 'var(--surface)',
             }}
           />
         }
@@ -254,11 +276,9 @@ export default async function HomePage() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {updateCards.map((update) => (
-            <UpdateCard key={update.slug} update={update} />
-          ))}
-        </div>
+        <Suspense fallback={<UpdatesFallback />}>
+          <LatestUpdatesList />
+        </Suspense>
       </section>
 
       {/* ── 7. Customer Enquiry Form Section ── */}

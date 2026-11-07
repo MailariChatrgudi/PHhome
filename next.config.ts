@@ -7,7 +7,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com;
+  img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com https:;
   font-src 'self' data:;
   frame-src 'self' https://challenges.cloudflare.com https://www.google.com https://maps.google.com;
   connect-src 'self' ws: wss: https://challenges.cloudflare.com https://api.cloudinary.com;
@@ -29,7 +29,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: '*.cloudinary.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
       },
     ],
   },

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { connectToDatabase, isDatabaseConfigured } from '@/lib/mongodb';
 import { Update, type ICoverImage, type ISEO } from '@/models/Update';
+import { extractCloudinaryPublicId } from '@/lib/cloudinary';
 
 function slugify(text: string): string {
   return text
@@ -133,13 +134,25 @@ export async function POST(request: Request) {
     const isPublished = status === 'published';
     const now = new Date();
 
+    const rawCover = coverImage as ICoverImage | undefined;
+    const coverUrl = rawCover?.url ? String(rawCover.url).trim() : '';
+    const coverPublicId =
+      (rawCover?.publicId ? String(rawCover.publicId).trim() : '') || extractCloudinaryPublicId(coverUrl);
+    const coverAlt = rawCover?.alt ? String(rawCover.alt).trim() : title.trim();
+
+    const formattedCoverImage: ICoverImage = {
+      url: coverUrl,
+      publicId: coverPublicId,
+      alt: coverAlt,
+    };
+
     const newUpdate = await Update.create({
       title: title.trim(),
       slug,
       previousSlugs: [],
       excerpt: (excerpt || (content ? content.slice(0, 160) : '')).trim(),
       content: content || '',
-      coverImage: (coverImage as ICoverImage) || { url: '', publicId: '', alt: '' },
+      coverImage: formattedCoverImage,
       seo: (seo as ISEO) || { title: '', description: '' },
       status: isPublished ? 'published' : 'draft',
       publishedAt: isPublished ? now : null,
