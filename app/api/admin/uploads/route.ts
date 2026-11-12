@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { isCloudinaryConfigured, uploadToCloudinary, saveLocalUpload } from '@/lib/cloudinary';
+import { isCloudinaryConfigured } from '@/lib/cloudinary';
+import { uploadToCloudinary, saveLocalUpload } from '@/lib/cloudinary.server';
 
 /**
  * POST /api/admin/uploads

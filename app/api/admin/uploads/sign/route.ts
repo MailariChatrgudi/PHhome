@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { getCloudinaryConfig, isCloudinaryConfigured } from '@/lib/cloudinary';
+import { isCloudinaryConfigured } from '@/lib/cloudinary';
+import { getCloudinaryConfig } from '@/lib/cloudinary.server';
 
 /**
  * POST /api/admin/uploads/sign (spec: api.md §4)

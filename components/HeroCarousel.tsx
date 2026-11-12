@@ -194,9 +194,10 @@ export default function HeroCarousel() {
 
         {/* Static H1 Heading */}
         <h1
-          className="text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white md:text-white mb-2 leading-tight max-w-xl"
+          className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white md:text-white mb-2 leading-tight max-w-xl"
           style={{
             textShadow: '0 2px 8px rgba(0, 0, 0, 0.6)',
+            
           }}
         >
           Skilled, compassionate care, at home.
