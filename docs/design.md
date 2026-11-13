@@ -194,117 +194,99 @@ Discipline: at most one amber element per viewport height, and at most one runni
 | **D5** | **Urgent callout in customer form** | Attention alert at the top of the form card: "Urgent? Call {phone} instead of waiting for a reply." Phone is an underlined `tel:` link. |
 | **D6** | **Sticky mobile bar** | Fixed to viewport bottom on mobile (<768 px). Call = `--plum` fill, WhatsApp = `--whatsapp` fill, both 56 px high with icons, upward shadow, `padding-bottom: env(safe-area-inset-bottom)`. Matching page bottom padding and `scroll-padding-bottom` (WCAG 2.4.11). Hidden on `/contact`. |
 
-## 6. Hero carousel (home page)
+## 6. Hero section (home page) — Updated 2026-11
 
-The old site has an automatic carousel in the hero that reads almost like a video. **Keep that idea, same width, and modernise it.**
+> **Status:** Implemented. The media carousel has been brought **inside** the Home Hero. The redundant TrustStrip section and separate "See us in action" strip below have been removed.
 
-### 6.1 What stays from the old hero
+### 6.1 Design intent & layout
 
-- Automatic slideshow of **4 illustrated slides** (nurse examining an elderly patient, doctor with clipboard, mother and baby care, patient transport/ambulance).
-- Hero sits **inset on the page, not full-bleed**, with the headline at the lower left and two buttons beneath it.
-- Floating "Chat with us" WhatsApp tab on the right edge.
+Three-second goal: visitors immediately perceive clinical trustworthiness, 24/7 availability, and immediate responsiveness, and tap **Call** or **Request a callback**.
 
-### 6.2 Width and size (same as old)
+#### Responsive layout structure:
+- **Mobile (<768px)** (stacked single column):
+  1. Eyebrow pill: "Home nursing in Bengaluru" with pulsing green indicator
+  2. H1 headline: "Skilled, compassionate care, at home." ("at home." in `#FFB3D1` accent with hand-drawn wavy underline)
+  3. Subtext: 2 lines max, 16px, white at 85% opacity
+  4. CTA row: "Call now" (54px, accent fill `#FFB3D1`, phone icon, 4s pulse ring) + "Request a callback" (54px, outlined glass). Full width stacked on mobile.
+  5. Trust strip: 3 compact inline items with green icon tint ("Trained caregivers", "Same-day response", "Available 24 × 7")
+  6. Media card: full width minus gutter, `aspect-ratio: 4/3`, `border-radius: 24px`, soft shadow, thin `border border-white/15` lifting off the gradient
+- **Tablet (768px–1023px)**: Single column like mobile, media card capped at `max-width: 640px` and horizontally centered (`mx-auto`).
+- **Desktop (≥1024px)**: Two-column grid inside `max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12` (reusing the old carousel width shell):
+  - Left column (55%): vertically centered copy, H1, CTAs, and trust strip.
+  - Right column (45%): media card carousel (`aspect-[4/3]`), overlapping the hero bottom edge by 32px (`translate-y-8`), sitting on a blurred brand-colour radial blob (`blur(50px)`).
 
-| Property | Value |
-|----------|-------|
-| Desktop width | Fills the page with equal side margins (about 7 % each side, minimum 24 px), **max-width 1400 px**, centred. This matches the old hero, which was ~1500 px wide inside a ~1740 px viewport |
-| Desktop shape | `aspect-ratio: 21 / 9` (old ratio ≈ 2.3 : 1), about 600 px tall at 1400 px wide |
-| Tablet | Side margin 24 px, `aspect-ratio: 16 / 9` |
-| Mobile | Full width minus 20 px margins; media area `aspect-ratio: 4 / 3` on top, text block **below** the media (not overlaid), as on the old mobile layout |
-| Corners | 28 px desktop, 20 px mobile |
-| Shadow | The single soft shadow from section 4 |
+### 6.2 Visual tokens & theme
 
-### 6.3 Wireframe: desktop
+| Token | Value | Usage |
+|-------|-------|-------|
+| Background | `linear-gradient(145deg, #3D0920 0%, #6B1038 40%, #A31758 75%, #C4256E 100%)` | Rich plum-to-magenta hero background (contrast ≥ 7:1) |
+| Blob 1 | Radial pink glow, top-right, `blur(60px)`, 20s drift | Ambient depth |
+| Blob 2 | Radial deep-plum glow, bottom-left, `blur(70px)`, 24s drift | Ambient depth |
+| Media card blob | Radial magenta glow behind media card on desktop, `blur(50px)` | Layered elevation |
+| Headline | `#FFFFFF`, 700 weight, tight line-height 1.08 | No text-shadow |
+| Accent highlight | `#FFB3D1` + SVG wavy underline `#F9A8D4` | Accent on "at home." |
+| Eyebrow pill | `bg-white/12 border border-white/25 text-[#FFD6E8]` | Legible uppercase letterspaced pill |
+| Primary CTA | `#FFB3D1` background, `#3D0920` text, 54px height, 4s pulse ring | Tap target ≥ 48px |
+| Secondary CTA | `bg-white/10 border-white/40 text-white`, 54px height | Modal trigger |
+| Trust items | Inline icons in `#86EFAC` | 3 verified factual points |
+| 24/7 Support badge | Frosted pill over top-right corner of media card with `#4ADE80` pulsing dot | High-contrast trust badge |
+| Caption chip | `bg-black/65 border-white/20 text-white/95 backdrop-blur-md` | Bottom-left of media card |
 
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│  [ slide image: crossfading, slowly zooming ]                            │
-│                                                                          │
-│  ▒▒▒▒ plum-deep gradient (left → transparent) ▒▒▒▒                        │
-│                                                                          │
-│  ● Home nursing in Bengaluru   ← label chip (links to the slide's service)│
-│  Skilled, compassionate                                                  │
-│  care, at home.                ← static H1                                │
-│  One-line support text.                                                  │
-│  [ Call now ]  [ Send a request ]                                        │
-│                                                                          │
-│  ▬▬▬▬▬ ▭▭▭▭▭ ▭▭▭▭▭ ▭▭▭▭▭   ⏸     ← progress bars + pause button         │
-└──────────────────────────────────────────────────────────────────────────┘
-```
+### 6.3 Media conversion & performance table
 
-### 6.4 Wireframe: mobile
+All heavy GIFs were converted to optimized WebP formats (each under 2 MB, with instant ~3-4 KB posters):
 
-```
-┌──────────────────────┐
-│ [ slide image 4:3 ]  │
-│  ▬▬▬ ▭▭▭ ▭▭▭ ▭▭▭  ⏸ │   ← indicators overlaid at the bottom of the image
-└──────────────────────┘
-  Home nursing in Bengaluru
-  Skilled, compassionate care, at home.
-  Support text.
-  [      Call now      ]
-  [   Send a request   ]
-```
+| Original GIF | Original Size | Converted WebP | WebP Size | Poster (LCP) | Reduction |
+|---|---|---|---|---|---|
+| `GifImage1.gif` | 6.74 MB (6,743,772 B) | `slide-1.webp` | 1.75 MB (1,834,712 B) | `slide-1-poster.webp` (3.0 KB) | **-72.8%** |
+| `GifImage2.gif` | 2.91 MB (2,908,304 B) | `slide-2.webp` | 1.40 MB (1,468,620 B) | `slide-2-poster.webp` (4.0 KB) | **-49.5%** |
+| `GifImage3.gif` | 6.61 MB (6,605,554 B) | `slide-3.webp` | 1.75 MB (1,836,088 B) | `slide-3-poster.webp` (2.8 KB) | **-72.2%** |
+| **Total** | **16.26 MB** | **All 3 Slides** | **4.90 MB** | **All 3 Posters (<10 KB)** | **-69.9%** |
 
-### 6.5 Motion (the "video" feel)
+### 6.4 Carousel behaviour & accessibility
 
-| Property | Value |
-|----------|-------|
-| Autoplay | Starts on load |
-| Slide duration | 6 s |
-| Transition | Crossfade, 900 ms, `ease-in-out` (no sliding) |
-| Ken Burns | Active slide scales 1.00 → 1.06 over 7 s, `linear`; each slide alternates its transform origin (top-left, bottom-right, centre, top-right) so the drift varies |
-| Text | H1, support text and buttons are **static** (they do not change per slide). Only the label chip swaps (fade, 300 ms) |
-| Indicators | Four thin bars (4 px high, pill) along the bottom. The active bar fills left to right in `--white` over 6 s while inactive bars are white at 35 % opacity. Story-style, so it signals time as well as position. Each bar is clickable |
-| Loop | Infinite; order fixed |
+- **Slide type:**
+  ```ts
+  export interface HeroSlide {
+    id: number;
+    type: 'image' | 'video';
+    src: string;
+    poster?: string;
+    alt: string;
+    caption?: string;
+    videoSources?: { src: string; type: string }[];
+  }
+  ```
+- **Auto-advance:** 5000ms for images; on video `onEnded` (max 12s fallback) for video slides.
+- **Controls & Gestures:**
+  - Left / right arrow buttons on desktop (48px tap targets, `w-12 h-12`).
+  - Mobile swipe detection (`onTouchStart`/`onTouchEnd`, threshold > 40px).
+  - Hover, focus, and touch pause the carousel (`onMouseEnter`, `onFocusCapture`, `onTouchStart`).
+- **Indicators:** Dot indicators at bottom; active dot is wider pill (34px) with filling progress bar (`slideProgressBar` CSS keyframe).
+- **Video & Data Saver:** Videos autoplay muted, loop, playsInline without controls. Paused/unloaded when off-screen. If `navigator.connection?.saveData` or `prefers-reduced-motion` is active, video autoplay is suppressed and the poster is shown.
+- **Accessibility:**
+  - `role="region"`, `aria-roledescription="carousel"`, `aria-label="Care services showcase"`.
+  - Slides have `role="group"`, `aria-roledescription="slide"`, `aria-label="Slide X of N: ..."`.
+  - `aria-live="off"` while autoplaying, `"polite"` when paused.
+  - Buttons and tabs are keyboard operable with visible focus ring.
+- **LCP & SSR:**
+  - `HomeHero.tsx` is an SSR Server Component: H1 headline and copy are delivered in initial server HTML.
+  - Slide 1 has `priority` and `fetchPriority="high"`.
+  - Container has fixed `aspect-[4/3]` ensuring CLS < 0.05.
 
-Only `transform` and `opacity` are animated, so it stays on the GPU and does not cause layout shift.
+### 6.5 Sticky mobile bottom bar (`MobileActionBar`)
 
-### 6.6 Overlay and legibility
-
-- Overlay on desktop: `linear-gradient(90deg, rgba(74,11,42,.82) 0%, rgba(74,11,42,.45) 45%, rgba(74,11,42,0) 75%)`, so white text on the left always has ≥ 4.5:1 contrast.
-- Overlay on mobile: none, because text sits below the image.
-- If a slide's art is dark on the left, keep the same overlay; do not change it per slide.
-
-### 6.7 Slide content
-
-| # | Label chip (links to) | Art subject |
-|---|-----------------------|-------------|
-| 1 | Home nursing → `/services/home-nursing` | Nurse caring for an elderly patient |
-| 2 | Hospital special nursing → `/services/hospital-nursing` | Doctor/nurse with clipboard |
-| 3 | Mother and baby care → `/services/mother-and-baby-care` | Postnatal care at home |
-| 4 | Patient transport → `/services/patient-transport` | Ambulance / transport vehicle |
-
-- **Interim art:** the existing illustrations are already plum and blue and match the logo, so they may be reused only if the owner holds the rights to them. Export them as WebP at 2800 × 1200 (desktop) and 1200 × 900 (mobile).
-- **Preferred art:** real photos of the team and equipment, colour-graded slightly warm, with the subject on the right half so the text area stays clear.
-
-### 6.8 Performance rules (the hero is the LCP element)
-
-- Slide 1 is rendered in the HTML with `priority` (preloaded, `fetchpriority="high"`). Slides 2–4 load **after** the page is interactive (`loading="lazy"` or preloaded when idle) so they never delay LCP.
-- Each slide image ≤ 150 KB (WebP/AVIF), served with `srcset` for 640 / 1200 / 2000 px. No GIF or video files.
-- The carousel container has a fixed `aspect-ratio`, so there is **zero layout shift**.
-- Carousel JS is a small client component; everything else on the page stays server-rendered.
-- Target: LCP < 2.5 s on 4G with the carousel present.
-
-### 6.9 Accessibility and SEO rules
-
-- **Pause control is required** (WCAG 2.2.2): a visible ⏸/▶ button, 44 × 44 px, next to the indicators.
-- Autoplay also pauses on: hover, keyboard focus inside the hero, touch-and-hold, and when the tab is hidden (`visibilitychange`).
-- `prefers-reduced-motion: reduce` → autoplay off, no zoom, no crossfade; slide 1 is shown and the user can step through with the indicators.
-- Markup: `role="region" aria-roledescription="carousel" aria-label="Our services"`; each slide `role="group" aria-roledescription="slide" aria-label="1 of 4"`; `aria-live="off"` while autoplaying, `"polite"` once paused. Inactive slides are `aria-hidden`.
-- Indicators are real `<button>`s with `aria-label="Go to slide 2: Hospital special nursing"`; keyboard operable with visible focus.
-- The page's single `<h1>` is the static headline, **outside** the changing parts, so crawlers see one stable H1. Slide images use meaningful `alt` text, and the label chips are normal crawlable links to the service pages (a useful internal link).
+- Visible only on mobile (`< md`).
+- Fades in after user scrolls past 90vh (clearing the hero).
+- Tap targets: Call Now (`tel:`) + WhatsApp (`wa.me`), 50px high, `safe-area-inset-bottom`.
 
 ## 7. Pages and wireframes
 
 ### Home
 ```
 [ Header ]
-HERO CAROUSEL   (section 6)
-
-TRUST STRIP   3 short facts, e.g. "Serving Bengaluru" · "Trained caregivers" · "Available 24/7"
-              (only facts the owner confirms)
+HOME HERO      (section 6) — Two-column (55% text / 45% media carousel inside hero),
+               H1, CTAs, trust strip inline, 24/7 badge, 4:3 media card
 
 SERVICES      H2 + 3x3 grid of service cards (plum-tint label chips)
 

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { connection } from 'next/server';
 import Breadcrumb from '@/components/Breadcrumb';
 import JsonLd from '@/components/JsonLd';
 import UpdateCard from '@/components/UpdateCard';
@@ -8,6 +7,10 @@ import { connectToDatabase, isDatabaseConfigured } from '@/lib/mongodb';
 import { Update } from '@/models/Update';
 import { breadcrumbSchema } from '@/lib/schema';
 import { buildMetadata } from '@/lib/seo';
+
+// Allow a blocking route in Next.js 16 with cacheComponents: true
+// (Direct MongoDB queries and searchParams without Suspense)
+export const instant = false;
 
 export const metadata: Metadata = buildMetadata({
   title: 'Care Updates & Practical Guides',
@@ -21,10 +24,6 @@ interface Props {
 }
 
 export default async function UpdatesPage({ searchParams }: Props) {
-  // Signal to Next.js that this page must render at request time (not prerendered).
-  // Required because cacheComponents:true in next.config conflicts with `export const dynamic`.
-  await connection();
-
   const resolvedParams = await searchParams;
   const pageParam = parseInt(resolvedParams.page || '1', 10);
   const page = Math.max(1, isNaN(pageParam) ? 1 : pageParam);

@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { connection } from 'next/server';
-import HeroCarousel from '@/components/HeroCarousel';
-import TrustStrip from '@/components/TrustStrip';
+import HomeHero from '@/components/HomeHero';
 import CtaBand from '@/components/CtaBand';
 import ServiceCard from '@/components/ServiceCard';
 import CustomerForm from '@/components/CustomerForm';
@@ -123,28 +122,10 @@ function UpdatesFallback() {
 export default function HomePage() {
   return (
     <HomePageClient>
-      {/* ── 1. Hero Carousel ── */}
-      <Suspense
-        fallback={
-          <div
-            style={{
-              width: '100%',
-              maxWidth: 1400,
-              margin: '24px auto',
-              aspectRatio: '21 / 9',
-              borderRadius: 28,
-              backgroundColor: 'var(--surface)',
-            }}
-          />
-        }
-      >
-        <HeroCarousel />
-      </Suspense>
+      {/* ── 1. Hero Section (with carousel inside) ── */}
+      <HomeHero />
 
-      {/* ── 2. Trust Strip ── */}
-      <TrustStrip />
-
-      {/* ── 3. Services Grid ── */}
+      {/* ── 2. Services Grid ── */}
       <section className="container-content section-py" aria-labelledby="services-heading">
         <div className="max-w-2xl mb-10 sm:mb-12">
           <EyebrowChip className="mb-3">Our Care Services</EyebrowChip>
@@ -176,10 +157,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 4. CTA Band ── */}
+      {/* ── 3. CTA Band ── */}
       <CtaBand />
 
-      {/* ── 5. How It Works ── */}
+      {/* ── 4. How It Works ── */}
       <section
         className="bg-[var(--blue-tint)] section-py my-8 border-y border-[var(--line)]"
         aria-labelledby="how-it-works-heading"
@@ -259,7 +240,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. Latest Care Advice & News (real + dummy fallback) ── */}
+      {/* ── 5. Latest Care Advice & News (real + dummy fallback) ── */}
       <section className="container-content section-py" aria-labelledby="updates-heading">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
           <div>
@@ -281,7 +262,7 @@ export default function HomePage() {
         </Suspense>
       </section>
 
-      {/* ── 7. Customer Enquiry Form Section ── */}
+      {/* ── 6. Customer Enquiry Form Section ── */}
       <section
         className="bg-[var(--plum-tint)] section-py border-t border-[var(--line)]"
         aria-labelledby="enquiry-section-heading"

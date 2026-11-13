@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import EnquiryModal from '@/components/EnquiryModal';
+import MobileActionBar from '@/components/MobileActionBar';
 
 const SESSION_KEY = 'enquiry_modal_shown';
 const DELAY_MS = 7000; // 7 seconds after mount
@@ -40,6 +41,8 @@ export default function HomePageClient({ children }: { children: React.ReactNode
       <EnquiryModalTrigger openModal={openModal} />
       {children}
       <EnquiryModal isOpen={modalOpen} onClose={closeModal} />
+      {/* Sticky bottom bar — mobile only, fades in after hero scroll */}
+      <MobileActionBar />
     </>
   );
 }

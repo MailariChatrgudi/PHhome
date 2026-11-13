@@ -5,12 +5,12 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com;
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com https:;
-  font-src 'self' data:;
-  frame-src 'self' https://challenges.cloudflare.com https://www.google.com https://maps.google.com;
-  connect-src 'self' ws: wss: https://challenges.cloudflare.com https://api.cloudinary.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://vercel.live;
+  style-src 'self' 'unsafe-inline' https://vercel.live;
+  img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com https://vercel.live https://vercel.com https:;
+  font-src 'self' data: https://vercel.live https://assets.vercel.com;
+  frame-src 'self' https://challenges.cloudflare.com https://www.google.com https://maps.google.com https://vercel.live;
+  connect-src 'self' ws: wss: https://challenges.cloudflare.com https://api.cloudinary.com https://vercel.live https://*.pusher.com wss://*.pusher.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';

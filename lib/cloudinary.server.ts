@@ -1,7 +1,5 @@
 // SERVER-ONLY — do NOT import this from Client Components or pages that bundle for the browser.
 // Use lib/cloudinary.ts for browser-safe utilities (extractCloudinaryPublicId, isCloudinaryConfigured).
-import 'server-only';
-
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
@@ -24,7 +22,7 @@ export function getCloudinaryConfig() {
  * Returns a CloudinaryUploadResult-shaped object for API compatibility.
  */
 export async function saveLocalUpload(
-  file: Blob,
+  file: Blob | Buffer | string,
   originalName: string,
   folder = 'updates'
 ): Promise<CloudinaryUploadResult> {
@@ -36,7 +34,22 @@ export async function saveLocalUpload(
   const fileName = `${baseName}_${Date.now()}${ext}`;
   const filePath = path.join(uploadsDir, fileName);
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  let buffer: Buffer;
+  if (typeof file === 'string') {
+    if (file.startsWith('data:')) {
+      const base64Data = file.split(',')[1] || '';
+      buffer = Buffer.from(base64Data, 'base64');
+    } else {
+      buffer = Buffer.from(file, 'base64');
+    }
+  } else if (Buffer.isBuffer(file)) {
+    buffer = file;
+  } else if (file && typeof (file as Blob).arrayBuffer === 'function') {
+    buffer = Buffer.from(await (file as Blob).arrayBuffer());
+  } else {
+    throw new Error('Unsupported file format provided to saveLocalUpload');
+  }
+
   fs.writeFileSync(filePath, buffer);
 
   const publicId = `${folder}/${path.basename(fileName, ext)}`;
