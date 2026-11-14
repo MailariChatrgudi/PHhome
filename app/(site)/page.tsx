@@ -23,40 +23,6 @@ export const metadata: Metadata = buildMetadata({
   path: '/',
 });
 
-/** ─── Dummy updates shown when fewer than 3 posts are published ─── */
-const DUMMY_UPDATES: UpdateCardData[] = [
-  {
-    slug: 'preparing-home-for-post-hospital-recovery',
-    title: 'How to Prepare Your Home for Post-Hospital Recovery',
-    excerpt:
-      'Essential tips on room setup, hygiene precautions, and caregiver coordination before your family member arrives home from the hospital.',
-    publishedAt: '2026-10-15T10:00:00.000Z',
-    tag: 'Care Guide',
-    accent: 'plum',
-    coverImage: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=500&fit=crop&auto=format',
-  },
-  {
-    slug: 'choosing-between-nurse-and-bedside-attendant',
-    title: 'Understanding the Difference Between a Nurse and an Attendant',
-    excerpt:
-      'A practical guide to help families choose the right level of care: clinical nursing versus daily physical assistance.',
-    publishedAt: '2026-10-08T09:30:00.000Z',
-    tag: 'Family Guidance',
-    accent: 'blue',
-    coverImage: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=500&fit=crop&auto=format',
-  },
-  {
-    slug: 'supporting-aging-parents-with-dementia-at-home',
-    title: 'Supporting an Aging Parent with Dementia in Familiar Surroundings',
-    excerpt:
-      'Why keeping routines consistent and environments familiar reduces anxiety and promotes safety for individuals living with memory loss.',
-    publishedAt: '2026-09-28T14:15:00.000Z',
-    tag: 'Dementia Care',
-    accent: 'plum',
-    coverImage: 'https://images.unsplash.com/photo-1581579186913-45ac24ed53e8?w=800&h=500&fit=crop&auto=format',
-  },
-];
-
 /** Fetch up to 3 published updates from MongoDB (server-side). */
 async function fetchPublishedUpdates(): Promise<UpdateCardData[]> {
   try {
@@ -94,15 +60,30 @@ async function fetchPublishedUpdates(): Promise<UpdateCardData[]> {
 async function LatestUpdatesList() {
   await connection();
   const realPosts = await fetchPublishedUpdates();
-  const needed = Math.max(0, 3 - realPosts.length);
-  const updateCards: UpdateCardData[] = [
-    ...realPosts.slice(0, 3),
-    ...DUMMY_UPDATES.slice(0, needed),
-  ];
+
+  if (realPosts.length === 0) {
+    return (
+      <div className="bg-[var(--surface)] rounded-2xl p-8 sm:p-10 border border-[var(--line)] text-center max-w-2xl mx-auto shadow-xs">
+        <span className="text-3xl block mb-2" aria-hidden="true">📖</span>
+        <h3 className="text-lg font-semibold text-[var(--ink)] mb-1">
+          Care Guides &amp; Practical Advice
+        </h3>
+        <p className="text-sm text-[var(--ink-muted)] mb-4 leading-relaxed">
+          Our team publishes practical guides on elder care, post-hospital recovery, and home nursing in Bengaluru.
+        </p>
+        <Link
+          href="/services"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--blue)] hover:text-[var(--blue-dark)] hover:underline"
+        >
+          Explore our home care services →
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {updateCards.map((update) => (
+      {realPosts.slice(0, 3).map((update) => (
         <UpdateCard key={update.slug} update={update} />
       ))}
     </div>
@@ -111,9 +92,9 @@ async function LatestUpdatesList() {
 
 function UpdatesFallback() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {DUMMY_UPDATES.map((update) => (
-        <UpdateCard key={update.slug} update={update} />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-64 rounded-2xl bg-[var(--surface)] border border-[var(--line)]" />
       ))}
     </div>
   );

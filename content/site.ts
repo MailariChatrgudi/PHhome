@@ -15,7 +15,12 @@ export const site = {
   legalName: "PH Home Nursing Services", // OWNER-CONFIRM: confirm legal entity name if different
 
   /** Domain & URLs */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://homenursingservice.in",
+  url:
+    process.env.NODE_ENV === "production" &&
+    (!process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL.includes("localhost"))
+      ? "https://homenursingservice.in"
+      : (process.env.NEXT_PUBLIC_SITE_URL ?? "https://homenursingservice.in"),
   adminPath: "/admin",
 
   /** Contact */

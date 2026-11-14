@@ -75,6 +75,11 @@ export const redirects: Redirect[] = [
     destination: '/services/live-in-caretaker',
     permanent: true,
   },
+  {
+    source: '/page/:path*',
+    destination: '/services',
+    permanent: true,
+  },
 
   // ── Careers / jobs redirects ──────────────────────────────────────────────
   {

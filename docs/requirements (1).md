@@ -125,7 +125,7 @@ Supporting static pages (Home, Services, About, Contact, FAQ, Careers) exist onl
 
 ## 9. Assumptions and open items
 
-- **Open:** brand name (`{{BRAND_NAME}}`) and whether the domain stays `homenursingservice.in`.
+- **Open:** brand name (`PH Home Nursing Services`) and whether the domain stays `homenursingservice.in`.
 - Single admin user; no multi-user roles in v1.
 - English only in v1 (Kannada can be added later through the same content config).
 - No medical advice is published; blog content is general information and is written by the owner.

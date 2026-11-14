@@ -314,7 +314,7 @@ export default function CustomerForm({
               name="email"
               type="email"
               suppressHydrationWarning
-              placeholder="e.g. name@example.com"
+              placeholder="e.g. yourname@gmail.com"
               value={form.email}
               onChange={(e) => {
                 setForm({ ...form, email: e.target.value });

@@ -6,7 +6,7 @@ import {
   verifyAdminPassword,
   SESSION_COOKIE_NAME,
 } from '@/lib/auth';
-import { checkLoginRateLimit } from '@/lib/rateLimit';
+import { checkLoginRateLimit, resetLoginFailures } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   // Extract client IP
@@ -60,6 +60,9 @@ export async function POST(request: Request) {
     );
   }
 
+  // Clear previous failed attempts on successful authentication
+  resetLoginFailures(ip);
+
   // Generate signed JWT session token
   const token = await createSessionToken(email.trim().toLowerCase());
 
@@ -68,7 +71,7 @@ export async function POST(request: Request) {
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });

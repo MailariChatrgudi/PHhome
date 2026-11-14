@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import JsonLd from "@/components/JsonLd";
 import { localBusinessSchema } from "@/lib/schema";
-
-// Inter variable font — the only font family used site-wide (design.md §3)
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} h-full`}>
+    <html lang="en" data-scroll-behavior="smooth" className="h-full">
       <body suppressHydrationWarning className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--ink)] antialiased">
         {/* Skip-to-content for keyboard users (design.md §11) */}
         <a href="#main-content" className="skip-link">

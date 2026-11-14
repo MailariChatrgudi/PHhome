@@ -24,6 +24,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: 'FILE_TOO_LARGE', message: 'Image size exceeds 5 MB limit' },
+        { status: 400 }
+      );
+    }
+
+    if (file.type && !ALLOWED_MIME_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'INVALID_FILE_TYPE', message: 'Only JPEG, PNG, WebP, and GIF images are allowed' },
+        { status: 400 }
+      );
+    }
+
     const folder = (formData.get('folder') as string) || 'updates';
     const originalName = file instanceof File ? file.name : 'cover.jpg';
 

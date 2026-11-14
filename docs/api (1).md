@@ -187,7 +187,7 @@ One published update. Returns `404 NOT_FOUND` for drafts and unknown slugs.
   "excerpt": "Five things to prepare before discharge.",
   "content": "## Before discharge\n...markdown...",
   "coverImage": { "url": "https://res.cloudinary.com/...", "alt": "..." },
-  "seo": { "title": "Caring for a parent after surgery | {{BRAND_NAME}}", "description": "..." },
+  "seo": { "title": "Caring for a parent after surgery | PH Home Nursing Services", "description": "..." },
   "publishedAt": "2026-10-20T06:30:00.000Z",
   "updatedAt": "2026-10-21T08:10:00.000Z"
 }

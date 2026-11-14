@@ -25,6 +25,8 @@ export interface RateLimitResult {
 
 export interface IRateLimiter {
   check(key: string, limit: number, windowMs: number): Promise<RateLimitResult>;
+  peek(key: string, limit: number): { allowed: boolean; retryAfter?: number };
+  delete(key: string): void;
 }
 
 interface WindowRecord {
@@ -46,6 +48,23 @@ class MemoryRateLimiter implements IRateLimiter {
         }
       }
     }
+  }
+
+  peek(key: string, limit: number): { allowed: boolean; retryAfter?: number } {
+    const now = Date.now();
+    const record = this.store.get(key);
+    if (!record || now >= record.resetAt) {
+      return { allowed: true };
+    }
+    if (record.count >= limit) {
+      const retryAfter = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+      return { allowed: false, retryAfter };
+    }
+    return { allowed: true };
+  }
+
+  delete(key: string): void {
+    this.store.delete(key);
   }
 
   async check(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
@@ -136,6 +155,14 @@ export async function checkLoginRateLimit(
   const key = `rl:login:fail:${ip}`;
   const result = await rateLimiter.check(key, 5, FIFTEEN_MINUTES_MS);
   return { allowed: result.allowed, retryAfter: result.retryAfter };
+}
+
+/**
+ * Resets failed login attempts for this IP on successful login.
+ */
+export function resetLoginFailures(ip: string): void {
+  const key = `rl:login:fail:${ip}`;
+  rateLimiter.delete(key);
 }
 
 

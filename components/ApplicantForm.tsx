@@ -284,7 +284,7 @@ export default function ApplicantForm() {
               name="email"
               type="email"
               required
-              placeholder="e.g. priya@example.com"
+              placeholder="e.g. priya@gmail.com"
               value={form.email}
               onChange={(e) => {
                 setForm({ ...form, email: e.target.value });
