@@ -142,9 +142,11 @@ export default function HomeHero() {
             {/* 2. H1 Headline */}
             <h1
               id="hero-heading"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-bold tracking-tight text-white leading-[1.08] mb-4 sm:mb-5"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-bold tracking-tight text-white !text-white leading-[1.08] mb-4 sm:mb-5"
             > 
-              Skilled, compassionate care,{' '}
+              <span className="text-white !text-white" style={{ color: '#ffffff' }}>
+                Skilled, compassionate care,
+              </span>{' '}
               <span className="text-[#FFB3D1] relative inline-block whitespace-nowrap">
                 at home.
                 {/* Hand-drawn SVG underline */}

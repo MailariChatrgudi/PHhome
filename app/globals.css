@@ -134,11 +134,13 @@ body {
 }
 
 /* ─── Typography scale (design.md §3) ─────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -0.025em;
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.025em;
+  }
 }
 
 .text-hero {

@@ -18,6 +18,7 @@ const cspHeader = `
 `;
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   allowedDevOrigins: isProd ? [] : ['localhost:3000'],
   cacheComponents: true,
   partialPrefetching: true,

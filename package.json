@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test --experimental-strip-types --loader ./tests/loader.mjs tests/queries.test.ts tests/updates.test.ts tests/admin.test.ts tests/hardening.test.ts",
-    "seed": "node --experimental-strip-types --loader ./tests/loader.mjs scripts/seed.ts"
+    "seed": "node --experimental-strip-types --loader ./tests/loader.mjs scripts/seed.ts",
+    "package:hostinger": "npm run build && node scripts/prepare-hostinger.mjs"
   },
   "imports": {
     "@/*": "./*"
